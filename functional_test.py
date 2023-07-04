@@ -19,6 +19,12 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(cls):
         cls.browser.quit()
         
+    def check_for_row_in_list_table(self):
+        WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.ID, 'id_list_table')))
+        table = self.browser.find_element(By.ID, 'id_list_table')
+        rows = table.find_element(By.TAG_NAME, 'tr')
+        self.assertIn(row_text, [row.text for row in rows])
+        
     def test_can_start_a_list_and_retreive_later(self):
         # Samantha has heard about a cool new online to-do app. She goes to checkout the home page
         self.browser.get('http://localhost:8000')
@@ -36,23 +42,18 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys('Buy Groceries')
         inputbox.send_keys(Keys.ENTER)
         sleep(1)
-        
         # When she hits enter, the page updates, and now the page lists "1. Buy Groceries" as an item in a to-do list.
-        WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.ID, 'id_list_table')))
-        table = self.browser.find_element(By.ID, 'id_list_table')
-        rows = table.find_elements(By.TAG_NAME, 'tr')
-        self.assertIn('1: Buy Groceries', [row.text for row in rows])
+        self.check_for_row_in_list_table('1: Buy Groceries')
         
         # There is still a text box inviting her to add another item. She enters "Make a meal plan" (she is very methodical)
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
         inputbox.send_keys('Make a meal plan')
         inputbox.send_keys(Keys.ENTER)
+        sleep(1)
         
         # The page updates again, and now shows both items on her list
-        table = self.browser.find_element(By.ID, 'id_list_table')
-        rows = table.find_elements(By.TAG_NAME, 'tr')
-        self.assertIn('1: Buy Groceries', [row.text for row in rows])
-        self.assertIn('2: Make a meal plan', [row.text for row in rows])
+        self.check_for_row_in_list_table('1: Buy Groceries')
+        self.check_for_row_in_list_table('2: Make a meal plan')
         
         # She wonders whether the site will remember her list. The she sees that the site has generated an unique URL for her -- there is some explanatory text to that effect. 
         
