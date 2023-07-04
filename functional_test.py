@@ -4,6 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait  # instead of time 
 from selenium.webdriver.support import expected_conditions as EC # 
+from django.db import models
 import unittest
 from time import sleep
 
@@ -42,6 +43,7 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys('Buy Groceries')
         inputbox.send_keys(Keys.ENTER)
         sleep(1)
+        
         # When she hits enter, the page updates, and now the page lists "1. Buy Groceries" as an item in a to-do list.
         self.check_for_row_in_list_table('1: Buy Groceries')
         
