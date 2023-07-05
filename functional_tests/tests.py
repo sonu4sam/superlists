@@ -23,6 +23,8 @@ class NewVisitorTest(LiveServerTestCase):
             try:
                 table = self.browser.find_element(By.ID, 'id_list_table')
                 rows = table.find_elements(By.TAG_NAME, 'tr')
+                if len(rows) == 0:
+                    raise NoSuchElementException('Table is empty')
                 self.assertTrue(any(row_text in row.text for row in rows))
                 return
             except (AssertionError, WebDriverException, NoSuchElementException) as e:
@@ -43,10 +45,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # She is invited to enter a to-do item straight away
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
-        self.assertEqual(
-            inputbox.get_attribute('placeholder'),
-            'Enter a to-do item'
-        )
+        self.assertEqual(inputbox.get_attribute('placeholder'), 'Enter a to-do item')
 
         # She types "Buy peacock feathers" into a text box (Edith's hobby is tying fly-fishing lures)
         inputbox.send_keys('Buy peacock feathers')
