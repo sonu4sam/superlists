@@ -7,6 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC #
 from django.db import models
 import unittest
 from time import sleep
+from selenium.common.exceptions import NoSuchElementException
+
 
 class NewVisitorTest(unittest.TestCase):
     
@@ -20,10 +22,14 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(cls):
         cls.browser.quit()
         
-    def check_for_row_in_list_table(self):
+    def check_for_row_in_list_table(self, row_text):
         WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.ID, 'id_list_table')))
         table = self.browser.find_element(By.ID, 'id_list_table')
-        rows = table.find_element(By.TAG_NAME, 'tr')
+        try:
+            rows = table.find_elements(By.TAG_NAME, 'tr')
+        except NoSuchElementException:
+            self.assertEqual(len(rows), 0)
+            
         self.assertIn(row_text, [row.text for row in rows])
         
     def test_can_start_a_list_and_retreive_later(self):
@@ -33,7 +39,7 @@ class NewVisitorTest(unittest.TestCase):
         # she notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
         header_text = self.browser.find_element(By.TAG_NAME, 'h1')
-        self.assertTrue('Your to-do list', header_text)
+        self.assertIn('your to-do list', header_text.text.lower())
         
         # she is invited to enter a to-do list item straight away
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
