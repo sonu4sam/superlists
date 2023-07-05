@@ -14,5 +14,5 @@ def view_list(request):
 
 def new_list(request):
     Item.objects.create(text=request.POST['item_text'])
-    return redirect('view_list') # The redirect function can take a relative URL (like you've used), an absolute URL, or a view function name.
+    return redirect('/lists/the-only-list-in-the-world/')  # add the leading slash
 

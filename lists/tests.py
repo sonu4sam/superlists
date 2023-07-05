@@ -51,7 +51,7 @@ class ItemModelTest(TestCase):
 class ListViewTest(TestCase):
 
     def test_user_list_template(self):
-        response = self.client.get('lists/the-only-list-in-the-world/')
+        response = self.client.get('/lists/the-only-list-in-the-world/')
         self.assertTemplateUsed(response, 'list.html')
 
        

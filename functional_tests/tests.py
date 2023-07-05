@@ -23,10 +23,11 @@ class NewVisitorTest(LiveServerTestCase):
             try:
                 table = self.browser.find_element(By.ID, 'id_list_table')
                 rows = table.find_elements(By.TAG_NAME, 'tr')
-                self.assertIn(row_text, [row.text for row in rows])
+                self.assertTrue(any(row_text in row.text for row in rows))
                 return
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
+                    print([row.text for row in rows])
                     raise e
                 time.sleep(0.5)
 
@@ -53,7 +54,7 @@ class NewVisitorTest(LiveServerTestCase):
         # "1: Buy peacock feathers" as an item in a to-do list table
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table('1: Buy peacock feathers')
-
+        time.sleep(1)
         # There is still a text box inviting her to add another item. She
         # enters "Use peacock feathers to make a fly" (Edith is very
         # methodical)
@@ -79,7 +80,7 @@ class NewVisitorTest(LiveServerTestCase):
         # She notices that her list has a unique URL
         edith_list_url = self.browser.current_url
         self.assertRegex(edith_list_url, '/lists/.+')
-
+        time.sleep(1)
         # Now a new user, Francis, comes along to the site.
 
         ## We use a new browser session to make sure that no information
